@@ -1,0 +1,99 @@
+**/target/**
+*.class
+*.tokens
+.pmd
+.checkstyle
+**/overlays/**
+.editorconfig
+# Common IDEs
+.classpath
+.idea/
+*.iml
+.project
+.settings
+.vscode
+
+# ANTLR output files
+ElMain.java
+ElLexer.java
+MMain.java
+MLexer.java
+JavaExpressionLexer.java
+JavaExpressionParser.java
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.DS_Store
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Visual Studio 2015 cache/options directory
+.vs/
+
+# Visual C++ cache files
+**/ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# BlueJ files
+*.ctxt
+
+# Chutzpah Test files
+**/_Chutzpah*
+
+# CodeRush
+**/.cr/
+
+# Python
+**/__pycache__/
+*.pyc
+
+# JustCode is a .NET coding add-in
+.JustCode
+
+# TeamCity is a build add-in
+_TeamCity*
+
+# DotCover is a Code Coverage Tool
+*.dotCover
+
+# NCrunch
+**/_NCrunch_*
+.*crunch*.local.xml
+**/nCrunchTemp_*
+
+# MightyMoose
+*.mm.*
+**/AutoTest.Net/
+
+# Web workbench (sass)
+.sass-cache/
+
+# FAKE - F# Make
+.fake/
+
+# Node.js Tools for Visual Studio
+.ntvs_analysis.dat
+
+# Visual Studio 6 build log
+*.plg
+
+# Visual Studio 6 workspace options file
+*.opt
+
