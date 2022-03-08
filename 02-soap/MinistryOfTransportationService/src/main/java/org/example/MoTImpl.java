@@ -6,6 +6,15 @@ import javax.jws.WebService;
 public class MoTImpl implements MoT {
     @Override
     public boolean registerVehicle(RegistrationRequest request) throws BadRequest {
+        return saveVehicleData(request);
+    }
+
+    @Override
+    public boolean updateVehicle(RegistrationRequest request) throws BadRequest {
+        return saveVehicleData(request);
+    }
+
+    private boolean saveVehicleData(RegistrationRequest request) throws BadRequest {
         if (request.getVIN() == null || request.getVIN().isEmpty() || request.getColor() == null
                 || request.getColor().isEmpty() || request.getEngineDisplacement() < 0
                 || request.getFuelCode() < 0 || request.getFuelCode() > 20) {

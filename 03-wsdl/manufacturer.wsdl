@@ -1,0 +1,110 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://example.org/" targetNamespace="http://example.org/">
+    <types>
+        <xs:schema version="1.0" targetNamespace="http://example.org/">
+            <xs:element name="BadRequest" type="tns:BadRequest" />
+            <xs:element name="cocResponse" type="tns:cocResponse" />
+            <xs:element name="getCoc" type="tns:getCoc" />
+            <xs:element name="getCocResponse" type="tns:getCocResponse" />
+            <xs:element name="getTechnicalData" type="tns:getTechnicalData" />
+            <xs:element name="getTechnicalDataResponse" type="tns:getTechnicalDataResponse" />
+            <xs:element name="technicalDataResponse" type="tns:technicalDataResponse" />
+            <xs:complexType name="getCoc">
+                <xs:sequence>
+                    <xs:element name="arg0" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getCocResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="tns:cocResponse" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="cocResponse">
+                <xs:sequence>
+                    <xs:element name="VIN" type="xs:string" />
+                    <xs:element name="color" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getTechnicalData">
+                <xs:sequence>
+                    <xs:element name="arg0" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getTechnicalDataResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="tns:technicalDataResponse" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="technicalDataResponse">
+                <xs:sequence>
+                    <xs:element name="VIN" type="xs:string" />
+                    <xs:element name="engineDisplacement" type="xs:int" />
+                    <xs:element name="fuelCode" type="xs:int" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="BadRequest">
+                <xs:sequence>
+                    <xs:element name="message" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </types>
+    <message name="getCoc">
+        <part name="parameters" element="tns:getCoc" />
+    </message>
+    <message name="getCocResponse">
+        <part name="parameters" element="tns:getCocResponse" />
+    </message>
+    <message name="getTechnicalData">
+        <part name="parameters" element="tns:getTechnicalData" />
+    </message>
+    <message name="getTechnicalDataResponse">
+        <part name="parameters" element="tns:getTechnicalDataResponse" />
+    </message>
+    <message name="BadRequest">
+        <part name="fault" element="tns:BadRequest" />
+    </message>
+    <portType name="Manufacturer">
+        <operation name="getCoc">
+            <input message="tns:getCoc" />
+            <output message="tns:getCocResponse" />
+            <fault message="tns:BadRequest" name="BadRequest" />
+        </operation>
+        <operation name="getTechnicalData">
+            <input message="tns:getTechnicalData" />
+            <output message="tns:getTechnicalDataResponse" />
+            <fault message="tns:BadRequest" name="BadRequest" />
+        </operation>
+    </portType>
+    <binding name="ManufacturerPortBinding" type="tns:Manufacturer">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+        <operation name="getCoc">
+            <soap:operation soapAction="http://example.org/getCoc" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="BadRequest">
+                <soap:fault name="BadRequest" use="literal" />
+            </fault>
+        </operation>
+        <operation name="getTechnicalData">
+            <soap:operation soapAction="http://example.org/getTechnicalData" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="BadRequest">
+                <soap:fault name="BadRequest" use="literal" />
+            </fault>
+        </operation>
+    </binding>
+    <service name="ManufacturerService">
+        <port name="ManufacturerPort" binding="tns:ManufacturerPortBinding">
+            <soap:address location="http://127.0.0.1:8000/manufacturer" />
+        </port>
+    </service>
+</definitions>
