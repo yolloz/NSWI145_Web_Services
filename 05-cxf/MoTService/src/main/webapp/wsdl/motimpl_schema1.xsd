@@ -1,0 +1,41 @@
+<xs:schema xmlns:tns="http://example.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://example.org" version="1.0">
+  <xs:element name="registerVehicle" type="tns:registerVehicle"/>
+  <xs:element name="registerVehicleResponse" type="tns:registerVehicleResponse"/>
+  <xs:element name="registrationRequest" type="tns:registrationRequest"/>
+  <xs:element name="updateVehicle" type="tns:updateVehicle"/>
+  <xs:element name="updateVehicleResponse" type="tns:updateVehicleResponse"/>
+  <xs:complexType name="updateVehicle">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:registrationRequest"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="registrationRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="VIN" type="xs:string"/>
+      <xs:element minOccurs="0" name="color" type="xs:string"/>
+      <xs:element name="engineDisplacement" type="xs:int"/>
+      <xs:element name="fuelCode" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="updateVehicleResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="registerVehicle">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="tns:registrationRequest"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="registerVehicleResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BadRequest" type="tns:BadRequest"/>
+  <xs:complexType name="BadRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
