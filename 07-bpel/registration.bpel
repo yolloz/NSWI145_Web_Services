@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="Registration" targetNamespace="http://example.org/bpel" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ws="http://example.org/" xmlns:tns="http://example.org/bpel" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tnswsdl="http://example.org/wsdl" xmlns:tnsxsd="http://example.org/xsd" queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0" expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0">
+
+    <import location="registration.wsdl" namespace="http://example.org/wsdl" importType="http://schemas.xmlsoap.org/wsdl/" />
+
+    <partnerLinks>
+        <partnerLink name="RegistrationPartnerLink" partnerLinkType="tnswsdl:RegistrationLinkType" myRole="CustomRegistrationExecutorRole" />
+
+        <partnerLink name="ManufacturerPartnerLink" partnerLinkType="tnswsdl:ManufacturerLinkType" myRole="CustomManufacturerExecutorRole" />
+        <partnerLink name="MoTPartnerLink" partnerLinkType="tnswsdl:MoTLinkType" myRole="CustomMoTExecutorRole" />
+    </partnerLinks>
+
+    <variables>
+        <variable name="input" messageType="tnswsdl:registrationIn" />
+        <variable name="inputVin" type="xsd:string" />
+
+        <variable name="cocRequestElement" element="ws:getCoc" />
+        <variable name="cocRequest" messageType="ws:getCoc" />
+        <variable name="cocResponse" messageType="ws:createReport" />
+
+        <variable name="technicalData" messageType="ws:getTechnicalData" />
+        <variable name="registrationInput" messageType="ws:registerVehicle" />
+    </variables>
+
+    <sequence>
+        <receive name="ReceiveVin" partnerLink="RegistrationPartnerLink" portType="tnswsdl:RegistrationPortType" operation="register" variable="input" createInstance="yes" />
+        <assign name="ParseInput">
+            <copy>
+                <from variable="input" part="parameters" />
+                <to variable="inputVin" />
+            </copy>
+        </assign>
+        <assign name="CopyVinCoc">
+            <copy>
+                <from variable="inputVin" />
+                <to variable="outputs" part="parameters" />
+            </copy>
+        </assign>
+
+        <assign name="InitCocRequest">
+            <copy>
+                <from>
+                    <literal>
+                        <ws:getCoc>
+                            <ws:arg0></ws:arg0>
+                        </ws:getCoc>
+                    </literal>
+                </from>
+                <to variable="createReportRequestElement" />
+            </copy>
+            <copy>
+                <from>$clientIDIn</from>
+                <to>$createReportRequestElement//lawsuit:arg0</to>
+            </copy>
+            <copy>
+                <from variable="createReportRequestElement" />
+                <to variable="createReportRequest" part="parameters" />
+            </copy>
+        </assign>
+
+        <assign name="CopyVinTechnicalData">
+            <copy>
+                <from variable="inputs" part="parameters" />
+                <to variable="outputs" part="parameters" />
+            </copy>
+        </assign>
+        <flow>
+            <invoke name="InvokeGetReport" partnerLink="GetReportLink" operation="createReport" inputVariable="createReportRequest" outputVariable="createReportResponse" />
+            <invoke name="InvokeGetReport" partnerLink="GetReportLink" operation="createReport" inputVariable="createReportRequest" outputVariable="createReportResponse" />
+        </flow>
+        <assign name="CopyAssign">
+            <copy>
+                <from variable="inputs" part="parameters" />
+                <to variable="outputs" part="parameters" />
+            </copy>
+        </assign>
+
+
+        <invoke name="InvokeGetReport" partnerLink="GetReportLink" operation="createReport" inputVariable="createReportRequest" outputVariable="createReportResponse" />
+
+        <reply name="ReplyCalcOutputs" partnerLink="CalculatorPartnerLink" portType="tnswsdl:CalcPortType" operation="calculateSomething" variable="outputs" />
+
+    </sequence>
+
+</process>

@@ -1,0 +1,107 @@
+<definitions xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://example.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://example.org/" name="MoTImplService">
+    <types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://example.org/">
+            <xs:element name="BadRequest" type="tns:BadRequest" />
+            <xs:element name="registerVehicle" type="tns:registerVehicle" />
+            <xs:element name="registerVehicleResponse" type="tns:registerVehicleResponse" />
+            <xs:element name="registrationRequest" type="tns:registrationRequest" />
+            <xs:element name="updateVehicle" type="tns:updateVehicle" />
+            <xs:element name="updateVehicleResponse" type="tns:updateVehicleResponse" />
+            <xs:complexType name="registerVehicle">
+                <xs:sequence>
+                    <xs:element name="arg0" type="tns:registrationRequest" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="registrationRequest">
+                <xs:sequence>
+                    <xs:element name="VIN" type="xs:string" />
+                    <xs:element name="color" type="xs:string" />
+                    <xs:element name="engineDisplacement" type="xs:int" />
+                    <xs:element name="fuelCode" type="xs:int" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="registerVehicleResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="xs:boolean" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="BadRequest">
+                <xs:sequence>
+                    <xs:element name="message" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="updateVehicle">
+                <xs:sequence>
+                    <xs:element name="arg0" type="tns:registrationRequest" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="updateVehicleResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="xs:boolean" />
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </types>
+    <message name="updateVehicle">
+        <part name="parameters" element="tns:updateVehicle" />
+    </message>
+    <message name="updateVehicleResponse">
+        <part name="parameters" element="tns:updateVehicleResponse" />
+    </message>
+    <message name="BadRequest">
+        <part name="fault" element="tns:BadRequest" />
+    </message>
+    <message name="registerVehicle">
+        <part name="parameters" element="tns:registerVehicle" />
+    </message>
+    <message name="registerVehicleResponse">
+        <part name="parameters" element="tns:registerVehicleResponse" />
+    </message>
+    <portType name="MoT">
+        <operation name="updateVehicle">
+            <input wsam:Action="http://example.org/MoT/updateVehicleRequest" message="tns:updateVehicle" />
+            <output wsam:Action="http://example.org/MoT/updateVehicleResponse" message="tns:updateVehicleResponse" />
+            <fault message="tns:BadRequest" name="BadRequest" wsam:Action="http://example.org/MoT/updateVehicle/Fault/BadRequest" />
+        </operation>
+        <operation name="registerVehicle">
+            <input wsam:Action="http://example.org/MoT/registerVehicleRequest" message="tns:registerVehicle" />
+            <output wsam:Action="http://example.org/MoT/registerVehicleResponse" message="tns:registerVehicleResponse" />
+            <fault message="tns:BadRequest" name="BadRequest" wsam:Action="http://example.org/MoT/registerVehicle/Fault/BadRequest" />
+        </operation>
+    </portType>
+    <binding name="MoTImplPortBinding" type="tns:MoT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+        <operation name="updateVehicle">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="BadRequest">
+                <soap:fault name="BadRequest" use="literal" />
+            </fault>
+        </operation>
+        <operation name="registerVehicle">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="BadRequest">
+                <soap:fault name="BadRequest" use="literal" />
+            </fault>
+        </operation>
+    </binding>
+    <service name="MoTImplService">
+        <port name="MoTImplPort" binding="tns:MoTImplPortBinding">
+            <soap:address location="http://127.0.0.1:8000/registration" />
+        </port>
+    </service>
+    <plnk:partnerLinkType name="MoTLinkType">
+        <plnk:role name="CustomMoTExecutorRole" portType="tns:MoT" />
+    </plnk:partnerLinkType>
+</definitions>

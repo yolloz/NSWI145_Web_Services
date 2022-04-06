@@ -1,0 +1,113 @@
+<definitions xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://example.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://example.org/" name="ManufacturerImplService">
+    <types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://example.org/">
+            <xs:element name="BadRequest" type="tns:BadRequest" />
+            <xs:element name="cocResponse" type="tns:cocResponse" />
+            <xs:element name="getCoc" type="tns:getCoc" />
+            <xs:element name="getCocResponse" type="tns:getCocResponse" />
+            <xs:element name="getTechnicalData" type="tns:getTechnicalData" />
+            <xs:element name="getTechnicalDataResponse" type="tns:getTechnicalDataResponse" />
+            <xs:element name="technicalDataResponse" type="tns:technicalDataResponse" />
+            <xs:complexType name="getCoc">
+                <xs:sequence>
+                    <xs:element name="arg0" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getCocResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="tns:cocResponse" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="cocResponse">
+                <xs:sequence>
+                    <xs:element name="VIN" type="xs:string" minOccurs="0" />
+                    <xs:element name="color" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="BadRequest">
+                <xs:sequence>
+                    <xs:element name="message" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getTechnicalData">
+                <xs:sequence>
+                    <xs:element name="arg0" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getTechnicalDataResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="tns:technicalDataResponse" minOccurs="0" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="technicalDataResponse">
+                <xs:sequence>
+                    <xs:element name="VIN" type="xs:string" minOccurs="0" />
+                    <xs:element name="engineDisplacement" type="xs:int" />
+                    <xs:element name="fuelCode" type="xs:int" />
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </types>
+    <message name="getCoc">
+        <part name="parameters" element="tns:getCoc" />
+    </message>
+    <message name="getCocResponse">
+        <part name="parameters" element="tns:getCocResponse" />
+    </message>
+    <message name="BadRequest">
+        <part name="fault" element="tns:BadRequest" />
+    </message>
+    <message name="getTechnicalData">
+        <part name="parameters" element="tns:getTechnicalData" />
+    </message>
+    <message name="getTechnicalDataResponse">
+        <part name="parameters" element="tns:getTechnicalDataResponse" />
+    </message>
+    <portType name="Manufacturer">
+        <operation name="getCoc">
+            <input wsam:Action="http://example.org/Manufacturer/getCocRequest" message="tns:getCoc" />
+            <output wsam:Action="http://example.org/Manufacturer/getCocResponse" message="tns:getCocResponse" />
+            <fault message="tns:BadRequest" name="BadRequest" wsam:Action="http://example.org/Manufacturer/getCoc/Fault/BadRequest" />
+        </operation>
+        <operation name="getTechnicalData">
+            <input wsam:Action="http://example.org/Manufacturer/getTechnicalDataRequest" message="tns:getTechnicalData" />
+            <output wsam:Action="http://example.org/Manufacturer/getTechnicalDataResponse" message="tns:getTechnicalDataResponse" />
+            <fault message="tns:BadRequest" name="BadRequest" wsam:Action="http://example.org/Manufacturer/getTechnicalData/Fault/BadRequest" />
+        </operation>
+    </portType>
+    <binding name="ManufacturerImplPortBinding" type="tns:Manufacturer">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+        <operation name="getCoc">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="BadRequest">
+                <soap:fault name="BadRequest" use="literal" />
+            </fault>
+        </operation>
+        <operation name="getTechnicalData">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+            <fault name="BadRequest">
+                <soap:fault name="BadRequest" use="literal" />
+            </fault>
+        </operation>
+    </binding>
+    <service name="ManufacturerImplService">
+        <port name="ManufacturerImplPort" binding="tns:ManufacturerImplPortBinding">
+            <soap:address location="http://127.0.0.1:8001/manufacturer" />
+        </port>
+    </service>
+    <plnk:partnerLinkType name="ManufacturerLinkType">
+        <plnk:role name="CustomManufacturerExecutorRole" portType="tns:Manufacturer" />
+    </plnk:partnerLinkType>
+</definitions>

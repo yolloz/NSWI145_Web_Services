@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://example.org/wsdl" xmlns:tnsxsd="http://example.org/xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://example.org/wsdl">
+    <wsdl:types>
+        <xs:schema targetNamespace="http://example.org/xsd">
+            <xs:element name="registrationIn" type="xs:string" />
+            <xs:element name="registrationOut" type="tnsxsd:registrationOutType" />
+            <xs:complexType name="registrationOutType">
+                <xs:sequence>
+                    <xs:element name="VIN" type="xs:string" />
+                    <xs:element name="color" type="xs:string" />
+                    <xs:element name="engineDisplacement" type="xs:int" />
+                    <xs:element name="fuelCode" type="xs:int" />
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="RegistrationInputMessage">
+        <wsdl:part name="parameters" element="tnsxsd:registrationIn" />
+    </wsdl:message>
+    <wsdl:message name="RegistrationOutputMessage">
+        <wsdl:part name="parameters" element="tnsxsd:registrationOut" />
+    </wsdl:message>
+    <wsdl:portType name="RegistrationPortType">
+        <wsdl:operation name="register">
+            <wsdl:input name="VIN" message="tns:RegistrationInputMessage" />
+            <wsdl:output name="RegistrationOutput" message="tns:RegistrationOutputMessage" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CustomRegistrationSOAPBinding" type="tns:RegistrationPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="register">
+            <soap:operation soapAction="urn:register" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CustomRegistrationService">
+        <wsdl:port name="RegistrationPort" binding="tns:CustomRegistrationSOAPBinding">
+            <soap:address location="http://localhost:8080/ode/processes/Registration" />
+        </wsdl:port>
+    </wsdl:service>
+    <!--
+    Declares a link type connecting a client with this service via RegistrationPortType 
+  -->
+    <plnk:partnerLinkType name="RegistrationLinkType">
+        <plnk:role name="CustomRegistrationExecutorRole" portType="tns:RegistrationPortType" />
+    </plnk:partnerLinkType>
+</wsdl:definitions>
