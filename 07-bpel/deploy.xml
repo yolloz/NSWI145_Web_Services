@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:tnsbpel="http://nswi145/Calc1/bpel" xmlns:tnswsdl="http://nswi145/Calc1/wsdl">
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:tnsbpel="http://example.org/bpel" xmlns:tnswsdl="http://example.org/wsdl" xmlns:ws="http://example.org/">
 
-    <process name="tnsbpel:CustomCalculator">
+    <process name="tnsbpel:Registration">
         <active>true</active>
-        <provide partnerLink="CalculatorPartnerLink">
-            <service name="tnswsdl:CustomCalcService" port="CalcPort" />
+        <provide partnerLink="RegistrationPartnerLink">
+            <service name="tnswsdl:CustomRegistrationService" port="RegistrationPort" />
         </provide>
+
+        <provide partnerLink="RegistrationPartnerLink">
+            <service name="tnswsdl:CustomRegistrationService" port="ManufacturerClientPort" />
+        </provide>
+        <invoke partnerLink="ManufacturerPartnerLink">
+            <service name="ws:ManufacturerImplService" port="ManufacturerImplPort" />
+        </invoke>
+
+        <provide partnerLink="RegistrationPartnerLink">
+            <service name="tnswsdl:CustomRegistrationService" port="MotClientPort" />
+        </provide>
+        <invoke partnerLink="MotPartnerLink">
+            <service name="ws:MoTImplService" port="MoTImplPort" />
+        </invoke>
+
     </process>
 
 </deploy>

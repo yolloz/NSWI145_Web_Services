@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:tns="http://example.org/wsdl" xmlns:tnsxsd="http://example.org/xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://example.org/wsdl">
+<wsdl:definitions xmlns:tns="http://example.org/wsdl" xmlns:tnsxsd="http://example.org/xsd" xmlns:ws="http://example.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://example.org/wsdl">
+    <wsdl:import namespace="http://example.org/" location="manufacturer.wsdl" />
+    <wsdl:import namespace="http://example.org/" location="mot.wsdl" />
+
     <wsdl:types>
         <xs:schema targetNamespace="http://example.org/xsd">
             <xs:element name="registrationIn" type="xs:string" />
@@ -14,18 +17,36 @@
             </xs:complexType>
         </xs:schema>
     </wsdl:types>
+
     <wsdl:message name="RegistrationInputMessage">
         <wsdl:part name="parameters" element="tnsxsd:registrationIn" />
     </wsdl:message>
     <wsdl:message name="RegistrationOutputMessage">
         <wsdl:part name="parameters" element="tnsxsd:registrationOut" />
     </wsdl:message>
+
     <wsdl:portType name="RegistrationPortType">
         <wsdl:operation name="register">
             <wsdl:input name="VIN" message="tns:RegistrationInputMessage" />
             <wsdl:output name="RegistrationOutput" message="tns:RegistrationOutputMessage" />
         </wsdl:operation>
     </wsdl:portType>
+
+    <wsdl:portType name="ManufacturerClientPortType">
+        <wsdl:operation name="cocCallback">
+            <wsdl:input message="ws:getCocResponse" name="cocResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="technicalDataCallback">
+            <wsdl:input message="ws:getTechnicalDataResponse" name="technicalDataResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:portType name="MotClientPortType">
+        <wsdl:operation name="registrationCallback">
+            <wsdl:input message="ws:registerVehicleResponse" name="registrationResponse" />
+        </wsdl:operation>
+    </wsdl:portType>
+
     <wsdl:binding name="CustomRegistrationSOAPBinding" type="tns:RegistrationPortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
         <wsdl:operation name="register">
@@ -38,9 +59,44 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
+
+    <wsdl:binding name="CustomManufacturerSOAPBinding" type="tns:ManufacturerClientPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="cocCallback">
+            <soap:operation soapAction="urn:cocCallback" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="technicalDataCallback">
+            <soap:operation soapAction="urn:technicalDataCallback" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:binding name="CustomMotSOAPBinding" type="tns:MotClientPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="registrationCallback">
+            <soap:operation soapAction="urn:registrationCallback" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+
     <wsdl:service name="CustomRegistrationService">
         <wsdl:port name="RegistrationPort" binding="tns:CustomRegistrationSOAPBinding">
             <soap:address location="http://localhost:8080/ode/processes/Registration" />
+        </wsdl:port>
+
+        <wsdl:port name="ManufacturerClientPort" binding="tns:CustomManufacturerSOAPBinding">
+            <soap:address location="http://localhost:8080/ode/processes/ManufacturerClient" />
+        </wsdl:port>
+
+        <wsdl:port name="MotClientPort" binding="tns:CustomMotSOAPBinding">
+            <soap:address location="http://localhost:8080/ode/processes/MotClient" />
         </wsdl:port>
     </wsdl:service>
     <!--
@@ -48,5 +104,17 @@
   -->
     <plnk:partnerLinkType name="RegistrationLinkType">
         <plnk:role name="CustomRegistrationExecutorRole" portType="tns:RegistrationPortType" />
+    </plnk:partnerLinkType>
+
+    <!-- Manufacturer -->
+    <plnk:partnerLinkType name="ManufacturerLinkType">
+        <plnk:role name="ManufacturerRole" portType="ws:Manufacturer" />
+        <plnk:role name="ManufacturerRoleClient" portType="tns:ManufacturerClientPortType" />
+    </plnk:partnerLinkType>
+
+    <!-- MoT -->
+    <plnk:partnerLinkType name="MotLinkType">
+        <plnk:role name="MotRole" portType="ws:MoT" />
+        <plnk:role name="MotRoleClient" portType="tns:MotClientPortType" />
     </plnk:partnerLinkType>
 </wsdl:definitions>

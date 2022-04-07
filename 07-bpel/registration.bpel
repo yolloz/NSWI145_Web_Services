@@ -6,20 +6,32 @@
     <partnerLinks>
         <partnerLink name="RegistrationPartnerLink" partnerLinkType="tnswsdl:RegistrationLinkType" myRole="CustomRegistrationExecutorRole" />
 
-        <partnerLink name="ManufacturerPartnerLink" partnerLinkType="tnswsdl:ManufacturerLinkType" myRole="CustomManufacturerExecutorRole" />
-        <partnerLink name="MoTPartnerLink" partnerLinkType="tnswsdl:MoTLinkType" myRole="CustomMoTExecutorRole" />
+        <partnerLink name="ManufacturerPartnerLink" partnerLinkType="tnswsdl:ManufacturerLinkType" myRole="ManufacturerRoleClient" partnerRole="ManufacturerRole" />
+        <partnerLink name="MotPartnerLink" partnerLinkType="tnswsdl:MotLinkType" myRole="MotRoleClient" partnerRole="MotRole" />
     </partnerLinks>
 
     <variables>
-        <variable name="input" messageType="tnswsdl:registrationIn" />
+        <variable name="input" messageType="tnsxsd:registrationIn" />
         <variable name="inputVin" type="xsd:string" />
 
         <variable name="cocRequestElement" element="ws:getCoc" />
         <variable name="cocRequest" messageType="ws:getCoc" />
-        <variable name="cocResponse" messageType="ws:createReport" />
+        <variable name="cocResponse" messageType="ws:getCocResponse" />
+        <variable name="cocResponseElement" element="ws:getCocResponse" />
 
-        <variable name="technicalData" messageType="ws:getTechnicalData" />
-        <variable name="registrationInput" messageType="ws:registerVehicle" />
+        <variable name="technicalDataRequestElement" element="ws:getTechnicalData" />
+        <variable name="technicalDataRequest" messageType="ws:getTechnicalData" />
+        <variable name="technicalDataResponse" messageType="ws:getTechnicalDataResponse" />
+        <variable name="technicalDataResponseElement" element="ws:getTechnicalDataResponse" />
+
+        <variable name="VIN" type="xsd:string" />
+        <variable name="color" type="xsd:string" />
+        <variable name="engineDisplacement" type="xsd:int" />
+        <variable name="fuelCode" type="xsd:int" />
+
+        <variable name="registerRequestElement" element="ws:registerVehicle" />
+        <variable name="registerRequest" messageType="ws:registerVehicle" />
+        <variable name="registerResponse" messageType="ws:registerVehicleResponse" />
     </variables>
 
     <sequence>
@@ -28,12 +40,6 @@
             <copy>
                 <from variable="input" part="parameters" />
                 <to variable="inputVin" />
-            </copy>
-        </assign>
-        <assign name="CopyVinCoc">
-            <copy>
-                <from variable="inputVin" />
-                <to variable="outputs" part="parameters" />
             </copy>
         </assign>
 
@@ -46,39 +52,116 @@
                         </ws:getCoc>
                     </literal>
                 </from>
-                <to variable="createReportRequestElement" />
+                <to variable="cocRequestElement" />
             </copy>
             <copy>
-                <from>$clientIDIn</from>
-                <to>$createReportRequestElement//lawsuit:arg0</to>
+                <from variable="inputVIN" />
+                <to>$cocRequestElement//ws:arg0</to>
             </copy>
             <copy>
-                <from variable="createReportRequestElement" />
-                <to variable="createReportRequest" part="parameters" />
+                <from variable="cocRequestElement" />
+                <to variable="cocRequest" part="parameters" />
             </copy>
         </assign>
 
-        <assign name="CopyVinTechnicalData">
+        <assign name="InitTechnicalDataRequest">
             <copy>
-                <from variable="inputs" part="parameters" />
-                <to variable="outputs" part="parameters" />
+                <from>
+                    <literal>
+                        <ws:getTechnicalData>
+                            <ws:arg0></ws:arg0>
+                        </ws:getTechnicalData>
+                    </literal>
+                </from>
+                <to variable="technicalDataRequestElement" />
+            </copy>
+            <copy>
+                <from variable="inputVIN" />
+                <to>$technicalDataRequestElement//ws:arg0</to>
+            </copy>
+            <copy>
+                <from variable="technicalDataRequestElement" />
+                <to variable="technicalDataRequest" part="parameters" />
             </copy>
         </assign>
-        <flow>
-            <invoke name="InvokeGetReport" partnerLink="GetReportLink" operation="createReport" inputVariable="createReportRequest" outputVariable="createReportResponse" />
-            <invoke name="InvokeGetReport" partnerLink="GetReportLink" operation="createReport" inputVariable="createReportRequest" outputVariable="createReportResponse" />
+
+        <flow name="GetVehicleData">
+            <invoke name="InvokeCoc" partnerLink="ManufacturerPartnerLink" portType="ws:Manufacturer" operation="getCoc" inputVariable="cocRequest" outputVariable="cocResponse" />
+            <invoke name="InvokeTechnicalData" partnerLink="ManufacturerPartnerLink" portType="ws:Manufacturer" operation="getTechnicalData" inputVariable="technicalDataRequest" outputVariable="technicalDataResponse" />
         </flow>
-        <assign name="CopyAssign">
+
+        <assign name="ParseCocRequest">
             <copy>
-                <from variable="inputs" part="parameters" />
-                <to variable="outputs" part="parameters" />
+                <from variable="cocResponse" part="parameters" />
+                <to variable="cocResponseElement" />
+            </copy>
+            <copy>
+                <from>$cocResponseElement//ws:color</from>
+                <to variable="color" />
+            </copy>
+            <copy>
+                <from variable="technicalDataRequestElement" />
+                <to variable="technicalDataRequest" part="parameters" />
+            </copy>
+        </assign>
+        <assign name="ParseTechnicalDataRequest">
+            <copy>
+                <from variable="technicalDataResponse" part="parameters" />
+                <to variable="technicalDataResponseElement" />
+            </copy>
+            <copy>
+                <from>$technicalDataResponseElement//ws:engineDisplacement</from>
+                <to variable="engineDisplacement" />
+            </copy>
+            <copy>
+                <from>$technicalDataResponseElement//ws:fuelCode</from>
+                <to variable="fuelCode" />
+            </copy>
+        </assign>
+
+        <assign name="InitRegistrationRequest">
+            <copy>
+                <from>
+                    <literal>
+                        <ws:registerVehicle>
+                            <ws:arg0>
+                                <ws:VIN></ws:VIN>
+                                <ws:color></ws:color>
+                                <ws:engineDisplacement></ws:engineDisplacement>
+                                <ws:fuelCode></ws:fuelCode>
+                            </ws:arg0>
+                        </ws:registerVehicle>
+
+                    </literal>
+                </from>
+                <to variable="technicalDataRequestElement" />
+            </copy>
+            <copy>
+                <from variable="inputVIN" />
+                <to>$registerRequestElement//ws:VIN</to>
+            </copy>
+            <copy>
+                <from variable="color" />
+                <to>$registerRequestElement//ws:color</to>
+            </copy>
+            <copy>
+                <from variable="engineDisplacement" />
+                <to>$registerRequestElement//ws:engineDisplacement</to>
+            </copy>
+            <copy>
+                <from variable="fuelCode" />
+                <to>$registerRequestElement//ws:fuelCode</to>
+            </copy>
+            <copy>
+                <from variable="registerRequestElement" />
+                <to variable="registerRequest" part="parameters" />
             </copy>
         </assign>
 
 
-        <invoke name="InvokeGetReport" partnerLink="GetReportLink" operation="createReport" inputVariable="createReportRequest" outputVariable="createReportResponse" />
+        <invoke name="InvokeRegister" partnerLink="MotPartnerLink" portType="ws:MoT" operation="registerVehicle" inputVariable="registerRequest" outputVariable="registerResponse" />
 
-        <reply name="ReplyCalcOutputs" partnerLink="CalculatorPartnerLink" portType="tnswsdl:CalcPortType" operation="calculateSomething" variable="outputs" />
+        <reply name="ReplyOutput" partnerLink="RegistrationPartnerLink" portType="tnswsdl:RegistrationPortType" operation="register" variable="response" />
 
     </sequence>
 
