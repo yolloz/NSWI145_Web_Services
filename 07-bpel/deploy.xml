@@ -7,14 +7,14 @@
             <service name="tnswsdl:CustomRegistrationService" port="RegistrationPort" />
         </provide>
 
-        <provide partnerLink="RegistrationPartnerLink">
+        <provide partnerLink="ManufacturerPartnerLink">
             <service name="tnswsdl:CustomRegistrationService" port="ManufacturerClientPort" />
         </provide>
         <invoke partnerLink="ManufacturerPartnerLink">
             <service name="ws:ManufacturerImplService" port="ManufacturerImplPort" />
         </invoke>
 
-        <provide partnerLink="RegistrationPartnerLink">
+        <provide partnerLink="MotPartnerLink">
             <service name="tnswsdl:CustomRegistrationService" port="MotClientPort" />
         </provide>
         <invoke partnerLink="MotPartnerLink">

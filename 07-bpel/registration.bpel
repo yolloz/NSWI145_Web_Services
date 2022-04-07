@@ -11,7 +11,7 @@
     </partnerLinks>
 
     <variables>
-        <variable name="input" messageType="tnsxsd:registrationIn" />
+        <variable name="input" messageType="tnswsdl:RegistrationInputMessage" />
         <variable name="inputVin" type="xsd:string" />
 
         <variable name="cocRequestElement" element="ws:getCoc" />
@@ -32,6 +32,9 @@
         <variable name="registerRequestElement" element="ws:registerVehicle" />
         <variable name="registerRequest" messageType="ws:registerVehicle" />
         <variable name="registerResponse" messageType="ws:registerVehicleResponse" />
+
+        <variable name="responseElement" element="tnsxsd:registrationOut" />
+        <variable name="response" messageType="tnswsdl:RegistrationOutputMessage" />
     </variables>
 
     <sequence>
@@ -55,7 +58,7 @@
                 <to variable="cocRequestElement" />
             </copy>
             <copy>
-                <from variable="inputVIN" />
+                <from variable="inputVin" />
                 <to>$cocRequestElement//ws:arg0</to>
             </copy>
             <copy>
@@ -76,7 +79,7 @@
                 <to variable="technicalDataRequestElement" />
             </copy>
             <copy>
-                <from variable="inputVIN" />
+                <from variable="inputVin" />
                 <to>$technicalDataRequestElement//ws:arg0</to>
             </copy>
             <copy>
@@ -137,7 +140,7 @@
                 <to variable="technicalDataRequestElement" />
             </copy>
             <copy>
-                <from variable="inputVIN" />
+                <from variable="inputVin" />
                 <to>$registerRequestElement//ws:VIN</to>
             </copy>
             <copy>
@@ -160,6 +163,43 @@
 
 
         <invoke name="InvokeRegister" partnerLink="MotPartnerLink" portType="ws:MoT" operation="registerVehicle" inputVariable="registerRequest" outputVariable="registerResponse" />
+
+        <assign name="InitResponse">
+            <copy>
+                <from>
+                    <literal>
+                        <tnsxsd:registrationOut>
+                            <tnsxsd:VIN></tnsxsd:VIN>
+                            <tnsxsd:color></tnsxsd:color>
+                            <tnsxsd:engineDisplacement></tnsxsd:engineDisplacement>
+                            <tnsxsd:fuelCode></tnsxsd:fuelCode>
+                        </tnsxsd:registrationOut>
+
+                    </literal>
+                </from>
+                <to variable="responseElement" />
+            </copy>
+            <copy>
+                <from variable="inputVin" />
+                <to>$responseElement//ws:VIN</to>
+            </copy>
+            <copy>
+                <from variable="color" />
+                <to>$responseElement//ws:color</to>
+            </copy>
+            <copy>
+                <from variable="engineDisplacement" />
+                <to>$responseElement//ws:engineDisplacement</to>
+            </copy>
+            <copy>
+                <from variable="fuelCode" />
+                <to>$responseElement//ws:fuelCode</to>
+            </copy>
+            <copy>
+                <from variable="responseElement" />
+                <to variable="response" part="parameters" />
+            </copy>
+        </assign>
 
         <reply name="ReplyOutput" partnerLink="RegistrationPartnerLink" portType="tnswsdl:RegistrationPortType" operation="register" variable="response" />
 
