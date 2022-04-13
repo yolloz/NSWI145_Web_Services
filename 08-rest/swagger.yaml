@@ -1,0 +1,109 @@
+swagger: "2.0"
+info:
+  description: "This is an example implementation of a rest service of Ministry of transportation used for registration of vehicles."
+  version: "1.0.0"
+  title: "Vehicle Registration Service"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+basePath: "/rest"
+schemes:
+- "http"
+paths:
+  /register:
+    post:
+      tags:
+      - "register"
+      summary: "Register a new vehicle"
+      description: ""
+      operationId: "registerVehicle"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "New vehicle object that is registrated"
+        required: true
+        schema:
+          $ref: "#/definitions/Vehicle"
+      responses:
+        "201":
+          description: "Vehicle registered"
+  /register/{vin}:
+    get:
+      tags:
+      - "register"
+      summary: "Find registered vehicle by VIN"
+      description: "Returns a single vehicle"
+      operationId: "getVahicleByVin"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "vin"
+        in: "path"
+        description: "VIN of vehicle to return"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Vehicle"
+    put:
+      tags:
+      - "register"
+      summary: "Update an existing vehicle registration"
+      description: ""
+      operationId: "updateVehicle"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "vin"
+        in: "path"
+        description: "VIN of vehicle to update"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Vehicle object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Vehicle"
+      responses:
+        "200":
+          description: "Successfully updated"
+    delete:
+      tags:
+      - "register"
+      summary: "Deletes a vehicle registration"
+      description: ""
+      operationId: "deleteVehicle"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "vin"
+        in: "path"
+        description: "VIN of vehicle to delete"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Successfully deleted"
+definitions:
+  Vehicle:
+    type: "object"
+    properties:
+      vin:
+        type: "string"
+      color:
+        type: "string"
+      engineDisplacement:
+        type: "integer"
+        format: "int32"
+      fuelCode:
+        type: "integer"
+        format: "int32"
