@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<vehicle xmlns="http://example.org/manufacturer">
+    <vin>AAA12345678912345</vin>
+    <model>T</model>
+    <manufacturer>Ford</manufacturer>
+    <manufacturedIn>Highland Park, Michigan</manufacturedIn>
+</vehicle>

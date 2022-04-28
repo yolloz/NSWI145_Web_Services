@@ -1,0 +1,47 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vso: <http://purl.org/vso/ns#> .
+@prefix mnfc: <http://example.org/manufacturer/>
+
+
+# The model for manufacturer and car models were not good, it was a mess, so I remodelled it
+
+mnfc:Manufacturer a rdfs:Class ;
+    rdfs:label "Vehicle manufacturer"@en ,
+             "Výrobca vozidiel"@sk ;
+    rdfs:comment "A company that manufactures vehicles"@en ,
+                "Spoločnosť, ktorá vyrába vozidlá"@sk .
+
+mnfc:manufacturedBy a rdf:Property ;
+    rdfs:label "manufactured by"@en ,
+            "vyrobené"@sk ;
+    rdfs:comment "A relationship between a vehicle and the company that manufactured the vehicle"@en ,
+                "Vzťah medzi vozidlom a jeho výrobcom"@sk ;
+    rdfs:domain vso:MotorizedRoadVehicle ;
+    rdfs:range mnfc:Manufacturer .
+
+mnfc:VehicleModel a rdfs:Class ;
+    rdfs:label "A model of vehicle"@en, "Model vozidiel"@sk ;
+    rdfs:comment "A model range of vehicles"@en ,
+                "Modelová rada vozidiel"@sk .
+
+mnfc:modelOf a rdf:Property ;
+    rdfs:label "vehicle model"@en ,
+            "model vozidla"@sk ;
+    rdfs:comment "A relationship between a vehicle and the model range that it belongs to"@en ,
+                "Vzťah medzi vozidlom a jeho modelovou radou"@sk ;
+    rdfs:domain vso:MotorizedRoadVehicle ;
+    rdfs:range mnfc:VehicleModel .
+
+mnfc:ManufacturingPlant a rdfs:Class ;
+    rdfs:label "Manufacturing plant"@en, "Výrobný závod"@sk ;
+    rdfs:comment "Manufacturing plant where vehicles are produced"@en ,
+                "Výrobný závod produkujúci vozidlá"@sk .
+
+mnfc:manufacturedIn a rdf:Property ;
+    rdfs:label "manufactured in"@en ,
+            "vyrobené v"@sk ;
+    rdfs:comment "A relationship between a vehicle and the manufacturing plant where it was manufactured"@en ,
+                "Vzťah medzi vozidlom a výrobným závodom, kde bolo vyrobené"@sk ;
+    rdfs:domain vso:MotorizedRoadVehicle ;
+    rdfs:range mnfc:ManufacturingPlant .

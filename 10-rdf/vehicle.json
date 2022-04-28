@@ -1,0 +1,49 @@
+{
+    "@context": {
+        "@base": "http://example.org/manufacturer/",
+        "vso": "http://purl.org/vso/ns#>",
+        "mnfc": "http://example.org/manufacturer/",
+        "dbpedia-owl": "http://dbpedia.org/ontology/",
+        "vin": "@id",
+        "type": "@type",
+        "vehicles": "http://example.org/manufacturer/",
+        "Vehicle": "vso:MotorizedRoadVehicle",
+        "manufacturer": {
+            "@id": "mnfc:manufacturedBy",
+            "@type": "mnfc:Manufacturer"
+        },
+        "Manufacturer": "mnfc:Manufacturer",
+        "model": {
+            "@id": "mnfc:modelOf",
+            "@type": "mnfc:VehicleModel"
+        },
+        "Model": "mnfc:VehicleModel",
+        "manufacturedIn": {
+            "@id": "mnfc:manufacturedIn",
+            "@type": "mnfc:ManufacturingPlant"
+        },
+        "Plant": "mnfc:ManufacturingPlant",
+        "name": "dbpedia-owl:name"
+    },
+    "vehicles": [
+        {
+            "vin": "AAA12345678912345",
+            "model": {
+                "name": "T",
+                "@id": "http://example.org/manufacturer/models/T",
+                "type": "Model"
+            },
+            "manufacturer": {
+                "name": "Ford",
+                "@id": "http://example.org/manufacturer/manufacturers/Ford",
+                "type": "Manufacturer"
+            },
+            "manufacturedIn": {
+                "name": "Highland Park, Michigan",
+                "@id": "http://example.org/manufacturer/plants/Highland%20Park%2C%20Michigan",
+                "type": "Plant"
+            },
+            "type": "Vehicle"
+        }
+    ]
+}
